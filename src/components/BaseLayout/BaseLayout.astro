@@ -1,0 +1,15 @@
+---
+import Footer from "./footer.astro";
+import Headblock from "./headblock.astro";
+import Navbar from "./navbar.astro";
+import "./global.scss";
+---
+
+<html lang="en">
+  <Headblock />
+  <body>
+    <Navbar />
+    <slot />
+    <Footer />
+  </body>
+</html>

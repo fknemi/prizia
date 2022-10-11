@@ -1,0 +1,43 @@
+---
+import "./index.scss";
+---
+
+<div class="image-upload">
+  <label for="image-upload-input">Drag and Drop Image</label>
+  <input
+    class="image-upload-input"
+    type="file"
+    accept="image/*"
+    id="imageUpload"
+  />
+</div>
+
+<script is:inline>
+  const imageUploadInput = document.getElementById("imageUpload");
+  const fileInput = document.getElementById("imageUpload");
+  const codeElem = document.getElementById("code");
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+    imageUploadInput.addEventListener(eventName, preventDefaults, false);
+  });
+
+  const imageToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  fileInput.addEventListener("change", async (event) => {
+    let file = event.target.files[0];
+    const base64Image = await imageToBase64(file);
+    sessionStorage.setItem("image", base64Image);
+  });
+</script>

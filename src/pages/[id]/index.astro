@@ -1,0 +1,21 @@
+---
+const { id } = Astro.params;
+---
+
+<div>
+  <h3>
+    ID: {id}
+  </h3>
+
+  <input type="password" placeholder="password..." id="password" />
+</div>
+
+<script>
+  // import { validatePassword } from "../../common/utils";
+  // const password = document.getElementById("password");
+  // password.addEventListener("change", async (e: Event) => {
+  //   const { value } = e.target as HTMLInputElement;
+  //   const isSuccess = await validatePassword(value);
+  //   console.log(isSuccess)
+  // });
+</script>

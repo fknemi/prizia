@@ -1,0 +1,10 @@
+{
+  "extends": "astro/tsconfigs/base",
+
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "module": "esnext",
+    "target": "esnext",
+    "allowJs": true
+  }
+}
