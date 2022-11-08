@@ -63,3 +63,23 @@ export const hashPassword = async (password) => {
 export const validatePassword = async (password, hash) => {
   return bcrypt.compare(password.repeat(34), hash);
 };
+
+export const saveFiles = async (req, res, next) => {
+  const busboy = busboy({ headers: req.headers });
+  let formData = {};
+
+  busboy.on(
+    "field",
+    (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) => {
+      formData = { ...formData, [fieldname]: val };
+      
+    }
+  );
+
+  busboy.on("finish", () => {
+    req.body = formData;
+    next();
+  });
+
+  req.pipe(busboy);
+};

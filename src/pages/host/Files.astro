@@ -1,9 +1,54 @@
 ---
-
 ---
 
-
-
 <div>
-    <h1>files</h1>
+  <input type="file" name="" id="files" max="3" multiple />
 </div>
+
+<script type="text/javascript" defer>
+  let fileList = [];
+  const fileUpload = document.getElementById("files");
+  fileUpload.addEventListener("change", async (e) => {
+    for (let i = 0; i < e.target.files.length; i++) {
+      const files = e.target.files;
+
+      if (files[i].size > 26214400) {
+        alert("File Size is too large");
+        return;
+      }
+
+      for (let file of files) {
+        if (fileList.length === 3) {
+          alert("Reached File Limit");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const result = e.target.result;
+          console.log(typeof(result))
+          const fileName = e.target.fileName;
+          let body = new FormData();
+          body.set("fileName", fileName);
+          body.set("data", result);
+          let headers = new Headers();
+          headers.append("enctype", "multipart/form-data");
+          console.log(id)
+          headers.append("id", id)
+          
+
+          const req = await fetch("/api/temp/upload", {
+            method: "POST",
+            mode: "cors",
+            body: body,
+            headers: headers,
+          });
+          console.log(req);
+        };
+        reader.fileName = file.name;
+        reader.readAsBinaryString(file);
+        fileList.push(file.name);
+      }
+    }
+  });
+</script>

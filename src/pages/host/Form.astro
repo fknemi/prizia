@@ -1,14 +1,12 @@
 ---
 import Files from "./Files.astro";
-import "./host.scss";
-
 ---
 
 <div>
   <h1>Upload Image</h1>
 
-  <div class="form">
-    <div class="id-container">
+  <div>
+    <div>
       <h2 id="url">...</h2>
       <span id="updateId">
         <svg viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -18,64 +16,58 @@ import "./host.scss";
         </svg>
       </span>
     </div>
+
+    <input id="password" type="password" />
+
+    <button id="submit">Submit</button>
+
     <Files />
   </div>
 </div>
 
-<script>
-import {test} from "../../../public/common/utils.js";
+<script type="text/javascript">
+  const updateId = document.getElementById("updateId");
+  const url = document.getElementById("url");
+  const submitBtn = document.getElementById("submit");
+  const password = document.getElementById("password");
+  let id = "...";
+  const getGeneratedId = async () => {
+    const res = await fetch("./api/url");
+    if (res.status !== 200) {
+      return false;
+    }
+    const id = await res.text();
+    return id;
+  };
 
-  test()
-  // const updateId = document.getElementById("updateId");
-  // const url = document.getElementById("url");
-  // (async () => {
-  //   const id = await getGeneratedId(window.location.origin);
-  //   console.log(id);
-  // })()
+  window.onload = async () => {
+    id = await getGeneratedId();
+    if (id) {
+      url.innerText = id;
+    }
+  };
+  updateId.addEventListener("click", async () => {
+    id = await getGeneratedId();
+    if (id) {
+      url.innerText = id;
+    }
+  });
+  submitBtn.addEventListener("click", async () => {
+    let data = {};
 
-  // const getGeneratedId = async () => {
-  //   const res = await fetch("./api/url");
-  //   if (res.status !== 200) {
-  //     return false;
-  //   }
-  //   const id = await res.text();
-  //   return id;
-  // };
-
-
-  // window.onload = async () => {
-  //   let id = await getGeneratedId();
-  //   if (!id) {
-  //     id = "...";
-  //   }
-  //   url.innerText = id;
-  // };
-  // updateId.addEventListener("click", async () => {
-  //   let id = await getGeneratedId();
-  //   if (!id) {
-  //     id = "...";
-  //   }
-  // });
+    for (let i = 0; i < fileList.length; i++) {
+      try {
+        data[fileList[i]] = sessionStorage.getItem(fileList[i]);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  });
 </script>
 
-<!-- // if(!/(?=.*\d)/.test(password))
-// password regex to match atleast 1 number
-// const regex = /(?=.*\d)/;
-//  password regex to match atleast 1 uppercase letter
-// const regex1 = /(?=.*[A-Z])/;
-//  password regex to match atleast 1 lowercase letter
-//const regex2 = /(?=.*[a-z])/;
-//  password regex to match atleast 1 special character
-// const regex3 = /(?=.*[!@#$%^&*])/;
-//  password regex to match atleast 8 characters
- // const regex4 = /(?=.{8,})/;
-// const passwordInput = document.getElementById("password");
-  // const submitButton = document.querySelector("button");
-  
-  // const submit = () => {
-    // let password = (passwordInput as HTMLInputElement).value;
-    // hostFile("image", sessionStorage.getItem("image"), password, id);
-//  };
-  
-  // passwordInput.addEventListener("change", submit);
-  // submitButton.addEventListener("click", submit); --> 
+<style lang="scss">
+  body {
+    background: #000;
+    color: #fff;
+  }
+</style>
