@@ -3,6 +3,7 @@
 
 <div>
   <input type="file" name="" id="files" max="3" multiple />
+  
 </div>
 
 <script type="text/javascript" defer>
@@ -23,31 +24,6 @@
           return;
         }
 
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-          const result = e.target.result;
-          console.log(typeof(result))
-          const fileName = e.target.fileName;
-          let body = new FormData();
-          body.set("fileName", fileName);
-          body.set("data", result);
-          let headers = new Headers();
-          headers.append("enctype", "multipart/form-data");
-          console.log(id)
-          headers.append("id", id)
-          
-
-          const req = await fetch("/api/temp/upload", {
-            method: "POST",
-            mode: "cors",
-            body: body,
-            headers: headers,
-          });
-          console.log(req);
-        };
-        reader.fileName = file.name;
-        reader.readAsBinaryString(file);
-        fileList.push(file.name);
       }
     }
   });

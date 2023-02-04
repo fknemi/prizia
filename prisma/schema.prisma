@@ -15,5 +15,4 @@ model Files {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   password  String
-  fileUrls  String[] @unique
 }

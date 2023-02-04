@@ -3,8 +3,13 @@ import node from "@astrojs/node";
 
 export default defineConfig({
   integrations: [],
+  
   output: "server",
-  adapter: node(),
+  adapter: node({
+    mode: "standalone",
+
+
+  }),
   server: {
     port: 3000,
     host: "localhost",

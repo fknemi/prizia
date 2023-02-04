@@ -1,9 +1,8 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 import { PrismaClient } from "@prisma/client";
-import axios from "axios";
-
-const IMAGEKIT_API_ENDPOINT = "https://api.imagekit.io/v1";
+import bcrypt from "bcrypt";
+import fs from "fs";
 
 const prisma = new PrismaClient();
 
@@ -11,75 +10,44 @@ export const validId = async (id) => {
   return prisma.files.findFirst({ where: { id: id } });
 };
 
-export const createFolder = async (folderName) => {
+export const saveFile = async (id, password) => {
   try {
-    const req = await axios.post(
-      `${IMAGEKIT_API_ENDPOINT}/folder`,
-      {
-        folderName: folderName,
-        parentFolderPath: "Prizia",
+    await prisma.files.create({
+      data: {
+        id: id,
+        password: await hashPassword(password),
       },
-      {
-        headers: {
-          Authorization: `Basic ${process.env.IMAGEKIT_API_PRIVATE_KEY}`,
-        },
-      }
-    );
-
-    return Object.keys(req.data) === 0;
-  } catch {
+    });
+  } catch (err) {
+    console.log(err);
     return false;
   }
+  return true;
 };
-
-export const deleteFolder = async (folderName) => {
+export const deleteFolder = async (id) => {
   try {
-    const req = await axios.delete(
-      `${IMAGEKIT_API_ENDPOINT}/folder`,
-      {
-        folderPath: `Prizia/${folderName}`,
-      },
-      {
-        headers: {
-          Authorization: `Basic ${process.env.IMAGEKIT_API_PRIVATE_KEY}`,
-        },
-      }
-    );
-
-    return req.status === 200;
-  } catch {
-    return false;
+    await fs.promises.rm(`./${process.env.UPLOADS_FOLDER}/${id}`, {
+      recursive: true,
+      force: true,
+      maxRetries: 5,
+      retryDelay: 1000,
+    });
+  } catch (err) {
+    return err.code === "ENOENT";
   }
+  return true;
 };
-
 export const getHostedFiles = async (id) => {
   return prisma.files.findFirst({ where: { id: id } });
 };
 
 export const hashPassword = async (password) => {
   const salt = await bcrypt.genSalt(20);
-  return bcrypt.hash(this.password.repeat(34), salt);
+  return bcrypt.hash(password.repeat(34), salt);
 };
+
 export const validatePassword = async (password, hash) => {
   return bcrypt.compare(password.repeat(34), hash);
 };
 
-export const saveFiles = async (req, res, next) => {
-  const busboy = busboy({ headers: req.headers });
-  let formData = {};
-
-  busboy.on(
-    "field",
-    (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) => {
-      formData = { ...formData, [fieldname]: val };
-      
-    }
-  );
-
-  busboy.on("finish", () => {
-    req.body = formData;
-    next();
-  });
-
-  req.pipe(busboy);
-};
+// export const saveFiles = async (req, res, next) => {
