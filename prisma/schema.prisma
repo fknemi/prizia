@@ -10,9 +10,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model File {
+  id                      String    @id @unique @default(cuid())
+  createdAt               DateTime  @default(now())
+  fileName                String
+  encryptedFileName       String?
+  fileType                String
+  fileSize                Int
+  fileStoredPath          String
+  encryptedFileStoredPath String?
+  lastDownloaded          DateTime?
+  timesDownloaded         Int?
+  expiresAt               DateTime?
+  uploadId                String
+  Files                   Files?    @relation(fields: [uploadId], references: [id])
+}
+
 model Files {
-  id        String   @id @unique
+  id        String   @id @unique @default(cuid())
+  uploadId  String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  password  String
+  password  String?
+  expiresAt  DateTime?
+  files     File[]
 }

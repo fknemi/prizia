@@ -3,28 +3,29 @@ dotenv.config();
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import fs from "fs";
+export const prisma = new PrismaClient();
 
-const prisma = new PrismaClient();
-
-export const validId = async (id) => {
+export async function validId(id) {
   return prisma.files.findFirst({ where: { id: id } });
-};
+}
 
-export const saveFile = async (id, password) => {
+export async function saveFile(id, password) {
   try {
-    await prisma.files.create({
+    let didUpdate = await prisma.files.update({
+      where: {
+        uploadId: id,
+      },
       data: {
-        id: id,
         password: await hashPassword(password),
       },
     });
+    return didUpdate ? true : false;
   } catch (err) {
     console.log(err);
     return false;
   }
-  return true;
-};
-export const deleteFolder = async (id) => {
+}
+export async function deleteFolder(id) {
   try {
     await fs.promises.rm(`./${process.env.UPLOADS_FOLDER}/${id}`, {
       recursive: true,
@@ -36,18 +37,34 @@ export const deleteFolder = async (id) => {
     return err.code === "ENOENT";
   }
   return true;
-};
-export const getHostedFiles = async (id) => {
-  return prisma.files.findFirst({ where: { id: id } });
-};
+}
+export async function getHostedFiles(id) {
+  return prisma.files.findUnique({
+    where: { uploadId: id },
+    include: { files: true },
+  });
+}
 
-export const hashPassword = async (password) => {
-  const salt = await bcrypt.genSalt(20);
+export async function hashPassword(password) {
+  const salt = await bcrypt.genSalt(12);
   return bcrypt.hash(password.repeat(34), salt);
-};
+}
 
-export const validatePassword = async (password, hash) => {
+export async function validatePassword(password, hash) {
   return bcrypt.compare(password.repeat(34), hash);
-};
+}
 
-// export const saveFiles = async (req, res, next) => {
+export async function compressFile(file) {
+  let mz = new MiniZip();
+  return new Promise((resolve, reject) => {
+    zlib.deflate(file, (err, buffer) => {
+      if (err) {
+        return reject(err);
+      }
+
+      return resolve(mz.append("Hello", buffer, "lol"));
+    });
+  });
+}
+
+
