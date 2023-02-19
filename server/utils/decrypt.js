@@ -1,23 +1,13 @@
 import crypto from "crypto";
+import { getCipherKey, validateFile } from "./encrypt.js";
+import path from "path";
 import fs from "fs";
-import { getCipherKey } from "./encrypt.js";
-
 export async function decrypt(filePath, password) {
-  let buffer = fs.readFileSync(filePath);
-  if (!buffer) {
-    return;
-  }
-  const initVect = buffer.slice(0, 16);
-  const CIPHER_KEY = getCipherKey(password);
-
-  const decipher = crypto.createDecipheriv("aes256", CIPHER_KEY, initVect);
-  decipher.setAutoPadding(false);
-  decipher.setDefaultEncoding("base64");
-
-  const decrypted = Buffer.from(
-    decipher.update(buffer.slice(16)) + decipher.final()
-  );
-
-  const result = Buffer.from(decrypted);
+  let encrypted = fs.readFileSync(filePath);
+  password = getCipherKey(password);
+  const iv = encrypted.slice(0, 16);
+  encrypted = encrypted.slice(16);
+  const decipher = crypto.createDecipheriv("aes-256-ctr", password, iv);
+  const result = Buffer.concat([decipher.update(encrypted), decipher.final()]);
   return result;
 }

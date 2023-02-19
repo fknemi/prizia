@@ -13,7 +13,11 @@ import {
 import { prisma } from "./utils.js";
 
 export function getCipherKey(password) {
-  return crypto.createHash("sha256").update(password).digest();
+  return crypto
+    .createHash("sha256")
+    .update(String(password))
+    .digest("base64")
+    .substr(0, 32);
 }
 
 export async function validateFile(filePath, fileExtension) {
@@ -29,19 +33,12 @@ export async function validateFile(filePath, fileExtension) {
 }
 
 async function encrypt(filePath, password) {
-  const initVect = crypto.randomBytes(16);
-  const CIPHER_KEY = getCipherKey(password);
+  password = getCipherKey(password);
   let fileExtension = path.extname(filePath).substring(1);
   let buffer = await validateFile(filePath, fileExtension);
-
-  if (!buffer) {
-    return;
-  }
-
-  const cipher = crypto.createCipheriv("aes256", CIPHER_KEY, initVect);
-  cipher.setDefaultEncoding("base64");
-  const encrypted = Buffer.from(cipher.update(buffer) + cipher.final());
-  const result = Buffer.concat([initVect, encrypted]).toString("base64");
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv("aes-256-ctr", password, iv);
+  const result = Buffer.concat([iv, cipher.update(buffer), cipher.final()]);
   return result;
 }
 

@@ -28,7 +28,7 @@ export const videoFormats = [
 export async function compressImage(filePath, extension) {
   let file = fs.readFileSync(filePath);
   if (extension === "gif") {
-    return false;
+    return file;
   }
   return await sharp(Buffer.from(file.buffer)).webp({ quality: 50 }).toBuffer();
 }
