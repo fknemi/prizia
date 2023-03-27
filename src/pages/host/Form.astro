@@ -2,7 +2,39 @@
 import Files from "./Files.astro";
 ---
 
-<div>
+<form class="file-form-container">
+  <h2 id="host-id"></h2>
+  <Files />
+  <button type="submit" class="submit-btn">Save</button>
+</form>
+<script>
+  const form = document.querySelector(".file-form-container");
+  const hostId = document.getElementById("host-id");
+  hostId.innerText = localStorage.getItem("hostId") || "..."
+  genereateId();
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    window.location.href = "/host/password";
+  });
+
+  async function genereateId() {
+    const req = await fetch("/api/url/generate", {
+      method: "GET",
+    });
+    let id = await req.text();
+    if (!id) {
+      while (!id) {
+        genereateId();
+      }
+    } else {
+      localStorage.setItem("hostId", id);
+    }
+    hostId.innerText = id;
+  }
+</script>
+
+<!-- <div>
   <h1>Upload Image</h1>
 hello wrold
   <div>
@@ -57,4 +89,4 @@ hello wrold
 
 <style>
 
-</style>
+</style> -->

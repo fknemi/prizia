@@ -1,0 +1,270 @@
+:root {
+  --primary-svg-color: #fff;
+  --primary-text-color: #fff;
+}
+
+/* user preferences  */
+@media only screen and (prefers-color-scheme: dark) {
+  :root {
+    --primary-text-color: #fff;
+    --primary-svg-color: #fff;
+  }
+}
+@media only screen and (prefers-color-scheme: light) {
+  :root {
+    --primary-text-color: #000;
+    --primary-svg-color: #000;
+  }
+}
+
+[data-theme="light"] {
+  --primary-text-color: #000;
+  --primary-svg-color: #000;
+}
+
+h1,
+h2,
+h3,
+p {
+  color: var(--primary-svg-color);
+}
+
+.flex-col {
+  flex-direction: column;
+}
+.link-underline {
+  text-decoration: underline;
+}
+.link-underline:hover {
+  text-decoration: underline;
+}
+.medium-padding-lr {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+.gap-1 {
+  gap: 1rem;
+}
+.svg-icon {
+  fill: var(--primary-svg-color);
+}
+.svg-base {
+  width: 2rem;
+  height: 2rem;
+}
+.svg-md {
+  width: 2.2rem;
+  height: 2.2rem;
+}
+.svg-file-icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.border-dev {
+  border: 2px solid red;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.nav {
+  height: 3rem;
+}
+.font-medium {
+  font-weight: 500;
+}
+.font-lg {
+  font-size: 4rem;
+}
+.hero-p {
+  font-size: 1.5rem;
+  line-height: 1.5;
+  width: 70%;
+}
+.hero-container {
+  width: 100%;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding-left: 2rem;
+}
+.hero-container p {
+  margin-top: -2rem;
+}
+.hero-container a {
+  border: 2px solid #a2afb9;
+  padding: 0.5rem 1rem;
+  color: var(--primary-text-color);
+  border-radius: 10px;
+  text-decoration: none;
+}
+
+.file-form-container{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+}
+.file-form-container input {
+  width: auto;
+  margin-left: 6rem;
+}
+.file-form-container > h2 {
+  text-align: center;
+}
+.submit-btn{
+  width: 10rem;
+  height: 2.5rem;
+  padding: 0;
+  margin: 0;
+  
+
+}
+
+.files-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 30rem;
+  height: 100%;
+  gap: 1rem;
+}
+
+.files-container article {
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 24rem;
+  height: 3rem;
+  border-radius: 10px;
+  padding: 0 0.5rem 0 0.5rem;
+  margin: 0;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.files-container article p {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  line-height: auto;
+  padding: 0;
+  margin: 0;
+}
+
+.files-container button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 1rem;
+  width: 1rem;
+  height: 1rem;
+}
+.files-container button:focus {
+  outline: none;
+}
+.password-container {
+  height: 70vh;
+}
+.password-container button {
+  width: 10rem;
+  height: 2.5rem;
+  padding: 0;
+  margin: 0;
+}
+.password-container input,
+select {
+  width: 30rem;
+}
+
+.progress-container progress {
+  width: 20rem;
+  margin: 0;
+  padding: 0;
+}
+.progress-container {
+  height: calc(100% - 2rem);
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loading-file > *:not(.progress-container) {
+  display: none;
+}
+.file-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  padding-bottom: 0.5rem;
+  position: relative;
+}
+
+.file-card button {
+  padding: 0.5rem;
+  margin: 0;
+}
+.file-card svg {
+  width: 6rem;
+  height: 6rem;
+  fill: var(--primary-svg-color);
+}
+.file-size {
+  margin-top: -2rem;
+}
+.files-card-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  gap: 2rem;
+  flex-wrap: wrap;
+  border: 2px solid red;
+  /* margin-left: -8rem; */
+}
+
+.flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 4rem;
+}
+.files-card-title-container h2 {
+  padding: 0;
+  margin: 0;
+}
+.files-card-title-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.files-card-title-container article {
+  position: relative;
+  right: -30%;
+  padding: 0.5rem;
+  font-weight: 500;
+  top: 0;
+  color: var(--primary-text-color);
+}

@@ -1,7 +1,8 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
+// import * as argon2 from "argon2";
+
 import fs from "fs";
 export const prisma = new PrismaClient();
 
@@ -45,15 +46,6 @@ export async function getHostedFiles(id) {
   });
 }
 
-export async function hashPassword(password) {
-  const salt = await bcrypt.genSalt(12);
-  return bcrypt.hash(password.repeat(34), salt);
-}
-
-export async function validatePassword(password, hash) {
-  return bcrypt.compare(password.repeat(34), hash);
-}
-
 export async function compressFile(file) {
   let mz = new MiniZip();
   return new Promise((resolve, reject) => {
@@ -66,5 +58,3 @@ export async function compressFile(file) {
     });
   });
 }
-
-

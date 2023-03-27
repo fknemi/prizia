@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../../../components/BaseLayout/BaseLayout.astro";
+---
+
+<BaseLayout>
+  
+  <form class="password-container flex-center flex-col">
+    <input type="password" placeholder="Password" />
+    <select>
+      <option value="" disabled selected>Select</option>
+      <option>24 Hours</option>
+      <option>2 Days</option>
+      <option>4 Days</option>
+      <option>1 Week</option>
+    </select>
+    <button type="submit">Encrypt Files</button>
+  </form>
+</BaseLayout>
+
+<script>
+  const form = document.querySelector(".password-container");
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    window.location.href = "/id";
+  });
+</script>
+
