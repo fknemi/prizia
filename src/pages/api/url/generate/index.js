@@ -1,4 +1,4 @@
-import { validId } from "../../../../../utils/utils";
+import { validId } from "../../../../../utils/utils.js";
 import readable from "readable-url-names";
 
 export async function get({ params, req }) {

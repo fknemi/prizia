@@ -1,6 +1,6 @@
-import { decrypt } from "../../../../../../utils/decrypt";
-import { prisma } from "../../../../../../utils/utils";
-import { verifyToken } from "../../../../../../utils/validation";
+import { decrypt } from "../../../../../../utils/decrypt.js";
+import { prisma } from "../../../../../../utils/utils.js";
+import { verifyToken } from "../../../../../../utils/validation.js";
 
 export async function get({ params, request, response }) {
   let fileId = params.fileId;

@@ -3,13 +3,13 @@ import {
   saveFile,
   deleteFolder,
   prisma,
-} from "../../../../../utils/utils";
-import { encryptAllFiles } from "../../../../../utils/encrypt";
+} from "../../../../../utils/utils.js";
+import { encryptAllFiles } from "../../../../../utils/encrypt.js";
 
 export async function put({ params, request, response }) {
   const id = params.id;
 
-  const { password } = await request.json();
+  const { password, expiryTime } = await request.json();
 
   if (!id || !password) {
     return new Response("Missing id or password", {
@@ -18,13 +18,14 @@ export async function put({ params, request, response }) {
     });
   }
   let isValidId = await validId(id);
+
   if (!isValidId) {
     return new Response("Invalid id", {
       status: 400,
       statusText: "Bad Request",
     });
   }
-  let didSave = await saveFile(id, password);
+  let didSave = await saveFile(id, password, expiryTime);
   if (!didSave) {
     const didDeleteFolder = await deleteFolder(id);
     if (didDeleteFolder) {

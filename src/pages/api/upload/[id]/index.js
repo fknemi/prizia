@@ -1,8 +1,7 @@
-import { validId, prisma } from "../../../../../utils/utils";
+import { validId, prisma } from "../../../../../utils/utils.js";
 import busboy from "busboy";
 import fs from "fs";
 export async function post(test) {
-  // console.log(test);
   let { params, request } = test;
   let id = params.id;
   if (!id)
@@ -17,6 +16,11 @@ export async function post(test) {
       ...Object.fromEntries(request.headers),
     },
   });
+
+  if (!fs.existsSync(`./${process.env.UPLOADS_FOLDER}/${id}`)) {
+    fs.mkdirSync(`./${process.env.UPLOADS_FOLDER}/${id}`);
+  }
+
   const savePath = `./${process.env.UPLOADS_FOLDER}/${id}`;
   let totalBytesReceived = 0;
   let fileSize = 0;
@@ -32,12 +36,11 @@ export async function post(test) {
         if (fileSize === 0) {
           fileSize = request.headers["content-length"];
         }
-        const progress = Math.floor((totalBytesReceived / fileSize) * 100);
+        // const progress = Math.floor((totalBytesReceived / fileSize) * 100);
       });
       file.on("end", async () => {
         let buf = Buffer.concat(buffers);
         fs.writeFileSync(`${savePath}/${info.filename}`, buf);
-        console.log(info.mimeType)
         let fileData = {
           fileStoredPath: `${savePath}/${info.filename}`,
           fileName: info.filename,

@@ -34,13 +34,15 @@ import BaseLayout from "../../../components/BaseLayout/BaseLayout.astro";
       body: JSON.stringify({
         // @ts-ignore
         password: passwordElement.value,
-        expiryTime,
+        expiryTime: expiryTime,
       }),
     });
     if (req.status === 200) {
       window.location.href = `/hosted/${localStorage.getItem("hostId")}`;
-      sessionStorage.removeItem("fileList")
-      localStorage.removeItem("hostId")
+      sessionStorage.removeItem("fileList");
+      localStorage.removeItem("hostId");
+    } else {
+      return (window.location.href = `/host`);
     }
   });
   selectedElement.addEventListener("change", function (event) {

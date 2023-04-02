@@ -37,7 +37,6 @@ async function writeWebResponse(app, res, webResponse) {
     }
   }
   res.writeHead(status, Object.fromEntries(headers.entries()));
-  console.log("HELLo")
   if (webResponse.body) {
     for await (const chunk of responseIterator(webResponse)) {
       res.write(chunk);

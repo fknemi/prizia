@@ -27,7 +27,7 @@
       addFileElement(file);
     });
   }
-  console.log(fileList);
+
   window.addEventListener("DOMContentLoaded", () => {
     enableButton();
   });
@@ -176,12 +176,11 @@
     let hostId = localStorage.getItem("hostId");
 
     if (typeof hostId !== "string" || hostId instanceof String) {
-      console.log(hostId);
       return;
     }
 
     if (!hostId) return;
-    console.log(hostId);
+
     let formData = new FormData();
     formData.append("file", file);
     let xhr = new XMLHttpRequest();

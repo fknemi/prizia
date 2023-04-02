@@ -1,5 +1,5 @@
 import crypto from "crypto";
-
+import { prisma } from "./utils.js";
 const algo = "aes-256-cbc";
 const inVec = Buffer.from(process.env.IV, "hex");
 const secKey = Buffer.from(process.env.SECRET_KEY, "hex");
@@ -51,4 +51,13 @@ export async function validateUser(req, res, next) {
   }
 
   next();
+}
+
+export async function isFileExpired(id) {
+  const data = await prisma.files.findFirst({
+    where: {
+      uploadId: id,
+    },
+  });
+  return data.expiresAt < new Date();
 }

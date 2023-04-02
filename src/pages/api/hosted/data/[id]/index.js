@@ -1,5 +1,5 @@
-import { prisma } from "../../../../../../utils/utils";
-import { verifyToken } from "../../../../../../utils/validation";
+import { prisma } from "../../../../../../utils/utils.js";
+import { verifyToken } from "../../../../../../utils/validation.js";
 
 
 export async function get({ params, request }) {
@@ -21,7 +21,7 @@ export async function get({ params, request }) {
       },
     },
   });
-  console.log(files);
+  
 
   return new Response(JSON.stringify(files), {
     headers: {

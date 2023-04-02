@@ -1,6 +1,9 @@
 import { validId } from "../../../../../utils/utils.js";
 import { validatePassword } from "../../../../../utils/hash.js";
-import { generateToken } from "../../../../../utils/validation";
+import {
+  generateToken,
+  isFileExpired,
+} from "../../../../../utils/validation.js";
 
 export async function post({ params, request, cookies }) {
   let id = params.id;
@@ -28,7 +31,13 @@ export async function post({ params, request, cookies }) {
     });
   try {
     let token = await generateToken(id, password);
-
+    let didFileExpire = await isFileExpired(id);
+    if (didFileExpire) {
+      return new Response(`${id} Expired`, {
+        status: 400,
+        statusText: "Bad Request",
+      });
+    }
     return new Response("Login Successful", {
       status: 200,
       statusText: "OK",

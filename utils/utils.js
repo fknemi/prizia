@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
 dotenv.config();
-import { hashPassword } from "./hash";
+import { hashPassword } from "./hash.js";
 import { PrismaClient } from "@prisma/client";
 
 import fs from "fs";
@@ -10,7 +10,21 @@ export async function validId(id) {
   return prisma.files.findFirst({ where: { uploadId: id } });
 }
 
-export async function saveFile(id, password) {
+export async function saveFile(id, password, expiryTime) {
+  // expiryTime is in the format of 1H, 1D, 1W
+
+  // converting expiry time to date
+  let expiryDate = new Date();
+  let expiryTimeNumber = parseInt(expiryTime);
+  let expiryTimeUnit = expiryTime.slice(-1);
+  if (expiryTimeUnit === "H") {
+    expiryDate.setHours(expiryDate.getHours() + expiryTimeNumber);
+  } else if (expiryTimeUnit === "D") {
+    expiryDate.setDate(expiryDate.getDate() + expiryTimeNumber);
+  } else if (expiryTimeUnit === "W") {
+    expiryDate.setDate(expiryDate.getDate() + expiryTimeNumber * 7);
+  }
+
   try {
     let didUpdate = await prisma.files.update({
       where: {
@@ -18,6 +32,7 @@ export async function saveFile(id, password) {
       },
       data: {
         password: await hashPassword(password),
+        expiresAt: expiryDate,
       },
     });
     return didUpdate ? true : false;

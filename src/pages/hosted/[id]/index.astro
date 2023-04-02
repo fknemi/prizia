@@ -7,7 +7,7 @@ const { id } = Astro.params;
 <BaseLayout>
   <form class="password-container login-container flex-center flex-col">
     <h2 id="host-id">{id}</h2>
-    <input type="password" placeholder="Password" value="HelloWorld" />
+    <input type="password" placeholder="Password"/>
     <button>Login</button>
   </form>
 </BaseLayout>
@@ -30,12 +30,4 @@ const { id } = Astro.params;
       return window.location.replace(`/hosted/${hostId.innerText}/decrypted`);
     }
   });
-
-  // import { validatePassword } from "../../common/utils";
-  // const password = document.getElementById("password");
-  // password.addEventListener("change", async (e: Event) => {
-  //   const { value } = e.target as HTMLInputElement;
-  //   const isSuccess = await validatePassword(value);
-  //   console.log(isSuccess)
-  // });
 </script>
