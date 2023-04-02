@@ -21,32 +21,19 @@ const { id } = Astro.params;
   )[0];
 
   async function fetchFilesData() {
-    // const res = await fetch(`/api/hosted/data/${hostId.innerText}`, {
-    //   method: "GET",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "Access-Control-Allow-Origin": "*", // Required for CORS support to work
-    //     credentials: "include", // Required for cookies, authorization headers with HTTPS
-    //     sameSite: "none",
-    //     secure: "true",
-    //   },
-    // });
+    const res = await fetch(`/api/hosted/data/${hostId.innerText}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+        credentials: "include", // Required for cookies, authorization headers with HTTPS
+        sameSite: "none",
+        secure: "true",
+      },
+    });
 
     try {
-      const data = {
-        uploadId: "FlatShiveringSky",
-        expiresAt: "2023-03-31T15:04:01.820Z",
-        files: [
-          {
-            id: "clfv8xp9d0001vi7se342gz5y",
-            fileName: "ivan-kazlouskij-5e1iOp89ZhI-unsplash.jpg",
-            fileSize: 1813503,
-            fileType: "image/jpeg",
-          },
-        ],
-      };
-
-      // const data = await res.json();
+      const data = await res.json();
       for (let file of data.files) {
         addFileCard(file);
       }
@@ -101,19 +88,20 @@ const { id } = Astro.params;
   async function downloadFile(event) {
     let fileId = event.target.id;
     const res = await fetch(`/api/file/${hostId.innerText}/${fileId}`);
-    let data = await res.text();
-    // file is being saved as corrupted
-    const blob = new Blob([data], { type: "application/octet-stream" });
-    const url = window.URL.createObjectURL(blob);
+    let data = await res.blob();
+    let fileName = `${res.headers
+      .get("Content-Disposition")
+      .split("=")[1]
+      .replace(/"/g, "")}`;
+
+    const url = window.URL.createObjectURL(data);
     const a = document.createElement("a");
     a.style.display = "none";
+    a.download = fileName;
     a.href = url;
-    a.download = `${res.headers.get("Content-Disposition").split("=")[1].replace(/"/g, "")}`
-    document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
     a.remove();
-     
   }
 
   fetchFilesData();
