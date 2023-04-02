@@ -1,0 +1,120 @@
+---
+import BaseLayout from "../../../../components/BaseLayout/BaseLayout.astro";
+const { id } = Astro.params;
+---
+
+<BaseLayout>
+  <div class="flex-center flex-col">
+    <div class="files-card-title-container">
+      <h2 id="host-id">{id}</h2>
+      <article>Expires on 12/12/2021</article>
+    </div>
+
+    <div class="container files-card-container flex-wrap"></div>
+  </div>
+</BaseLayout>
+
+<script is:inline>
+  const hostId = document.getElementById("host-id");
+  const cardsContainer = document.getElementsByClassName(
+    "files-card-container"
+  )[0];
+
+  async function fetchFilesData() {
+    // const res = await fetch(`/api/hosted/data/${hostId.innerText}`, {
+    //   method: "GET",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+    //     credentials: "include", // Required for cookies, authorization headers with HTTPS
+    //     sameSite: "none",
+    //     secure: "true",
+    //   },
+    // });
+
+    try {
+      const data = {
+        uploadId: "FlatShiveringSky",
+        expiresAt: "2023-03-31T15:04:01.820Z",
+        files: [
+          {
+            id: "clfv8xp9d0001vi7se342gz5y",
+            fileName: "ivan-kazlouskij-5e1iOp89ZhI-unsplash.jpg",
+            fileSize: 1813503,
+            fileType: "image/jpeg",
+          },
+        ],
+      };
+
+      // const data = await res.json();
+      for (let file of data.files) {
+        addFileCard(file);
+      }
+    } catch {}
+  }
+
+  async function addFileCard(file) {
+    const cardContainer = document.createElement("article");
+    cardContainer.classList.add("file-card");
+    cardContainer.innerHTML = `
+      <span>
+        <svg
+          width="100%"
+          height="100%"
+          viewBox="0 0 46 38"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M6 0C2.686 0 0 2.686 0 6V32C0 35.314 2.686 38 6 38H40C43.314 38 46 35.314 46 32V6C46 2.686 43.314 0 40 0H6ZM6 4H40C41.105 4 42 4.895 42 6V28.4336L32.6816 20.0547C31.1586 18.6847 28.8442 18.6865 27.3242 20.0605L19.4023 27.2188L15.6094 23.9746C14.1084 22.6906 11.8944 22.6954 10.3984 23.9844L4 29.4961V6C4 4.895 4.895 4 6 4ZM14 10C11.791 10 10 11.791 10 14C10 16.209 11.791 18 14 18C16.209 18 18 16.209 18 14C18 11.791 16.209 10 14 10Z"
+            fill="currentColor"
+          ></path>
+        </svg>
+      </span>
+      <h4 class="font-medium">${file.fileName}</h4>
+      <p class="file-size">${formatBytes(file.fileSize)}</p>
+      <button onclick="downloadFile(event)" id="${file.id}">Download</button>
+    `;
+    cardsContainer.appendChild(cardContainer);
+  }
+  function formatBytes(bytes, decimals = 2) {
+    if (!+bytes) return "0 Bytes";
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = [
+      "Bytes",
+      "KiB",
+      "MiB",
+      "GiB",
+      "TiB",
+      "PiB",
+      "EiB",
+      "ZiB",
+      "YiB",
+    ];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+  }
+  async function downloadFile(event) {
+    let fileId = event.target.id;
+    const res = await fetch(`/api/file/${hostId.innerText}/${fileId}`);
+    let data = await res.text();
+    // file is being saved as corrupted
+    const blob = new Blob([data], { type: "application/octet-stream" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = `${res.headers.get("Content-Disposition").split("=")[1].replace(/"/g, "")}`
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove();
+     
+  }
+
+  fetchFilesData();
+</script>

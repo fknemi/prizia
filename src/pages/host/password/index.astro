@@ -3,25 +3,65 @@ import BaseLayout from "../../../components/BaseLayout/BaseLayout.astro";
 ---
 
 <BaseLayout>
-  
   <form class="password-container flex-center flex-col">
-    <input type="password" placeholder="Password" />
-    <select>
-      <option value="" disabled selected>Select</option>
+    <input id="password" type="text" placeholder="Password" />
+    <select id="expiry-time">
+      <option disabled selected>Select</option>
       <option>24 Hours</option>
       <option>2 Days</option>
       <option>4 Days</option>
       <option>1 Week</option>
     </select>
-    <button type="submit">Encrypt Files</button>
+    <button type="submit" id="password-submit-btn" disabled
+      >Encrypt Files</button
+    >
   </form>
 </BaseLayout>
 
 <script>
   const form = document.querySelector(".password-container");
-  form.addEventListener("submit", function (event) {
+  const selectedElement = document.getElementById("expiry-time");
+  const passwordElement = document.getElementById("password");
+  const submitBtn = document.getElementById("password-submit-btn");
+  let expiryTime = "";
+  form.addEventListener("submit", async function (event) {
     event.preventDefault();
-    window.location.href = "/id";
+    const req = await fetch(`/api/save/${localStorage.getItem("hostId")}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // @ts-ignore
+        password: passwordElement.value,
+        expiryTime,
+      }),
+    });
+    if (req.status === 200) {
+      window.location.href = `/hosted/${localStorage.getItem("hostId")}`;
+      sessionStorage.removeItem("fileList")
+      localStorage.removeItem("hostId")
+    }
   });
-</script>
+  selectedElement.addEventListener("change", function (event) {
+    // @ts-ignore
+    expiryTime = event.target.value;
+    const words = expiryTime.split(" ");
+    const value = parseInt(words[0]);
+    const unit = words[1];
+    expiryTime = `${value}${unit[0]}`;
+    enableButton();
+  });
 
+  passwordElement.addEventListener("input", function (event) {
+    enableButton();
+  });
+  function enableButton() {
+    // @ts-ignore
+    if (passwordElement.value.length > 8 && expiryTime !== "") {
+      submitBtn.removeAttribute("disabled");
+    } else {
+      submitBtn.setAttribute("disabled", "true");
+    }
+  }
+</script>

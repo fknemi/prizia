@@ -1,13 +1,13 @@
 import * as dotenv from "dotenv";
 dotenv.config();
+import { hashPassword } from "./hash";
 import { PrismaClient } from "@prisma/client";
-// import * as argon2 from "argon2";
 
 import fs from "fs";
 export const prisma = new PrismaClient();
 
 export async function validId(id) {
-  return prisma.files.findFirst({ where: { id: id } });
+  return prisma.files.findFirst({ where: { uploadId: id } });
 }
 
 export async function saveFile(id, password) {

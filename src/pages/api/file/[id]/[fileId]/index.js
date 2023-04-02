@@ -1,42 +1,57 @@
-// import { decrypt } from "../utils/decrypt.js";
-// import { prisma } from "../utils/utils.js";
+import { decrypt } from "../../../../../../utils/decrypt";
+import { prisma } from "../../../../../../utils/utils";
+import { verifyToken } from "../../../../../../utils/validation";
 
+export async function get({ params, request, response }) {
+  let fileId = params.fileId;
+  let { password } = await verifyToken(
+    request.headers.get("cookie").replace("token=", "")
+  );
+  let file = null;
+  try {
+    file = await prisma.file.findFirst({
+      where: {
+        id: fileId,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return new Response("Internal Server Error", {
+      status: 500,
+      statusText: "Internal Server Error",
+    });
+  }
+  if (!file) {
+    return new Response("File not found", {
+      status: 400,
+      statusText: "Bad Request",
+    });
+  }
+  let decryptedBuffer = null;
+  try {
+    decryptedBuffer = await decrypt(file.encryptedFileStoredPath, password);
+  } catch (err) {
+    console.log(err);
+    return new Response("Internal Server Error", {
+      status: 500,
+      statusText: "Internal Server Error",
+    });
+  }
+  if (!decryptedBuffer) {
+    return new Response("Internal Server Error", {
+      status: 500,
+      statusText: "Internal Server Error",
+    });
+  }
+  
 
-
-export async function get({params,req}){
-  // let fileId = req.params.fileId;
-  // let password = req.body.password;
-  // let file = null;
-  // try {
-  //   file = await prisma.file.findFirst({
-  //     where: {
-  //       id: fileId,
-  //     },
-  //   });
-  // } catch (err) {
-  //   console.log(err);
-  //   return res.status(500).json({ message: "Internal Server Error" });
-  // }
-  // if (!file) {
-  //   return res.status(400).json({ message: "File not found" });
-  // }
-  // let decryptedBuffer = null;
-  // try {
-  //   decryptedBuffer = await decrypt(file.encryptedFileStoredPath, password);
-  // } catch (err) {
-  //   console.log(err);
-  //   return res.status(500).json({ message: "Internal Server Error" });
-  // }
-  // if (!decryptedBuffer) {
-  //   return res.status(500).json({ message: "Internal Server Error" });
-  // }
-
-  // res.setHeader("Content-Type", file.fileType);
-  // res.setHeader("Content-Disposition", `attachment; filename=${file.fileName}`);
-  // res.setHeader("Content-Length", file.fileSize);
-
-  // return res.status(200).send(decryptedBuffer);
-  return res.status(200).send("ASJSJs");
+  return new Response(decryptedBuffer, {
+    status: 200,
+    statusText: "OK",
+    headers: {
+      "Content-Type": `${file.fileType}`,
+      "Content-Disposition": `attachment; filename=${file.fileName}`,
+      "Content-Length": decryptedBuffer.length,
+    },
+  });
 }
-
-// "/file/:id/:fileId"

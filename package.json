@@ -8,7 +8,7 @@
     "check": "astro check",
     "build": "astro build --force",
     "preview": "astro preview",
-    "server": "node server/server.mjs",
+    "start": "astro build --force && node app.mjs",
     "astro": "astro"
   },
   "devDependencies": {
@@ -33,7 +33,6 @@
     "event-stream": "^4.0.1",
     "express": "^4.18.1",
     "express-busboy": "^9.0.0",
-    "jsonwebtoken": "^9.0.0",
     "readable-url-names": "^1.1.2",
     "sharp": "^0.31.3"
   }

@@ -1,0 +1,41 @@
+---
+import BaseLayout from "../../../components/BaseLayout/BaseLayout.astro";
+
+const { id } = Astro.params;
+---
+
+<BaseLayout>
+  <form class="password-container login-container flex-center flex-col">
+    <h2 id="host-id">{id}</h2>
+    <input type="password" placeholder="Password" value="HelloWorld" />
+    <button>Login</button>
+  </form>
+</BaseLayout>
+<script is:inline>
+  const form = document.querySelector(".login-container");
+  const hostId = document.getElementById("host-id");
+
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const res = await fetch(`/api/login/${hostId.innerText}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        password: form.querySelector("input").value,
+      }),
+    });
+    if (res.status === 200) {
+      return window.location.replace(`/hosted/${hostId.innerText}/decrypted`);
+    }
+  });
+
+  // import { validatePassword } from "../../common/utils";
+  // const password = document.getElementById("password");
+  // password.addEventListener("change", async (e: Event) => {
+  //   const { value } = e.target as HTMLInputElement;
+  //   const isSuccess = await validatePassword(value);
+  //   console.log(isSuccess)
+  // });
+</script>

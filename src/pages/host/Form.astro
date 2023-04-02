@@ -10,15 +10,34 @@ import Files from "./Files.astro";
 <script>
   const form = document.querySelector(".file-form-container");
   const hostId = document.getElementById("host-id");
-  hostId.innerText = localStorage.getItem("hostId") || "..."
+
+  try {
+    hostId.innerText = JSON.parse(localStorage.getItem("hostId")) || "...";
+  } catch {
+    hostId.innerText = "...";
+  }
   genereateId();
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
+    // @ts-ignore
+
     window.location.href = "/host/password";
   });
 
   async function genereateId() {
+    // @ts-ignore
+    if (localStorage.getItem("hostId") && fileList.length !== 0) {
+      hostId.innerText = localStorage.getItem("hostId");
+      hostId.setAttribute("value", localStorage.getItem("hostId"));
+      document.querySelectorAll(".progress-container").forEach((el) => {
+        el.setAttribute("style", "display: none");
+      });
+      document.querySelectorAll(".loading-file").forEach((el) => {
+        el.classList.remove("loading-file");
+      });
+      return;
+    }
     const req = await fetch("/api/url/generate", {
       method: "GET",
     });
@@ -30,7 +49,9 @@ import Files from "./Files.astro";
     } else {
       localStorage.setItem("hostId", id);
     }
+
     hostId.innerText = id;
+    hostId.setAttribute("value", id);
   }
 </script>
 

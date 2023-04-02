@@ -217,6 +217,8 @@ select {
   padding: 1rem;
   padding-bottom: 0.5rem;
   position: relative;
+  /* width: 20rem;
+  height: 10rem; */
 }
 
 .file-card button {
@@ -267,4 +269,5 @@ select {
   font-weight: 500;
   top: 0;
   color: var(--primary-text-color);
+  
 }
