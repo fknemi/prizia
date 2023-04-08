@@ -14,7 +14,10 @@ if (!fs.existsSync(`./${process.env.TEMP_FOLDER}`)) {
 if (!fs.existsSync(`./${process.env.UPLOADS_FOLDER}`)) {
   fs.mkdirSync(`./${process.env.UPLOADS_FOLDER}`);
 }
-const allowedOrigins = ["https://prizia.darkness.co.in", "http://localhost:3000"]
+const allowedOrigins = [
+  "https://prizia.darkness.co.in",
+  "http://localhost:3000",
+];
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(express.json()); // for parsing application/json
@@ -31,6 +34,7 @@ app.use(
       }
       return callback(null, true);
     },
+    "Access-Control-Allow-Headers": "*",
   })
 );
 
