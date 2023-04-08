@@ -8,7 +8,7 @@
     "check": "astro check",
     "build": "astro build --force",
     "preview": "astro preview",
-    "start": "astro build --force && node app.mjs",
+    "start": "node app.mjs",
     "astro": "astro"
   },
   "devDependencies": {
