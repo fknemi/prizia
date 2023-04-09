@@ -50,7 +50,7 @@ export async function get({ params, request, response }) {
     headers: {
       "Content-Type": `${file.fileType}`,
       "Content-Disposition": `attachment; filename=${file.fileName}`,
-      "Content-Length": "decryptedBuffer.length",
+      "Content-Length": decryptedBuffer.length,
       "Cache-Control": "no-cache, no-store, must-revalidate",
       Pragma: "no-cache",
       Expires: 0,

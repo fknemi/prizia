@@ -33,8 +33,7 @@ app.use(
         return callback(new Error(msg), false);
       }
       return callback(null, true);
-    },
-    "Access-Control-Allow-Headers": "*",
+    }
   })
 );
 
