@@ -2,6 +2,10 @@ import { decrypt } from "../../../../../../utils/decrypt.js";
 import { prisma } from "../../../../../../utils/utils.js";
 import { verifyToken } from "../../../../../../utils/validation.js";
 
+const headers = {
+  "Set-Cookie": "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+};
+
 export async function get({ params, request, response }) {
   let fileId = params.fileId;
   let { password } = await verifyToken(
@@ -19,12 +23,14 @@ export async function get({ params, request, response }) {
     return new Response("Internal Server Error", {
       status: 500,
       statusText: "Internal Server Error",
+      headers
     });
   }
   if (!file) {
     return new Response("File not found", {
       status: 400,
       statusText: "Bad Request",
+      headers
     });
   }
   let decryptedBuffer = null;
@@ -35,12 +41,14 @@ export async function get({ params, request, response }) {
     return new Response("Internal Server Error", {
       status: 500,
       statusText: "Internal Server Error",
+      headers
     });
   }
   if (!decryptedBuffer) {
     return new Response("Internal Server Error", {
       status: 500,
       statusText: "Internal Server Error",
+      headers
     });
   }
 

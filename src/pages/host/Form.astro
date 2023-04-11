@@ -10,6 +10,7 @@ import Files from "./Files.astro";
 <script>
   const form = document.querySelector(".file-form-container");
   const hostId = document.getElementById("host-id");
+  const btn = document.getElementsByClassName("submit-btn")[0];
 
   try {
     hostId.innerText = JSON.parse(localStorage.getItem("hostId")) || "...";
@@ -21,8 +22,7 @@ import Files from "./Files.astro";
   form.addEventListener("submit", function (event) {
     event.preventDefault();
     // @ts-ignore
-
-    window.location.href = "/host/password";
+    return (window.location.href = "/host/password");
   });
 
   async function genereateId() {
@@ -54,60 +54,3 @@ import Files from "./Files.astro";
     hostId.setAttribute("value", id);
   }
 </script>
-
-<!-- <div>
-  <h1>Upload Image</h1>
-hello wrold
-  <div>
-    <div>
-      <h2 id="url">...</h2>
-      <span id="updateId">
-        
-      </span>
-    </div>
-
-    <input id="password" type="password" />
-
-    <button id="submit">Submit</button>
-
-    <Files />
-  </div>
-</div>
-
-<script type="text/javascript">
-  const updateId = document.getElementById("updateId");
-  const url = document.getElementById("url");
-  const submitBtn = document.getElementById("submit");
-  const password = document.getElementById("password");
-  let id = "...";
-  const getGeneratedId = async () => {
-    const res = await fetch("./api/url");
-    if (res.status !== 200) {
-      return false;
-    }
-    const id = await res.text();
-    return id;
-  };
-
-  window.onload = async () => {
-    id = await getGeneratedId();
-    if (id) {
-      url.innerText = id;
-    }
-  };
-  updateId.addEventListener("click", async () => {
-    id = await getGeneratedId();
-    if (id) {
-      url.innerText = id;
-    }
-  });
-  submitBtn.addEventListener("click", async () => {
-    
-
-    
-  });
-</script>
-
-<style>
-
-</style> -->

@@ -1,5 +1,3 @@
-import * as dotenv from "dotenv";
-dotenv.config();
 import { hashPassword } from "./hash.js";
 import { PrismaClient } from "@prisma/client";
 

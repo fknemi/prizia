@@ -1,3 +1,5 @@
+import * as dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import { handler as ssrHandler } from "./dist/server/entry.mjs";
 import { validateUser } from "./utils/validation.js";
@@ -14,9 +16,10 @@ if (!fs.existsSync(`./${process.env.TEMP_FOLDER}`)) {
 if (!fs.existsSync(`./${process.env.UPLOADS_FOLDER}`)) {
   fs.mkdirSync(`./${process.env.UPLOADS_FOLDER}`);
 }
+
 const allowedOrigins = [
   "https://prizia.darkness.co.in",
-  "http://localhost:3000",
+  process.env.ENVIRONMENT === "development" ? "*" : "",
 ];
 const app = express();
 const port = process.env.PORT || 3000;
@@ -26,14 +29,18 @@ app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        var msg =
-          "The CORS policy for this site does not " +
-          "allow access from the specified Origin.";
-        return callback(new Error(msg), false);
+
+      if (!allowedOrigins.includes("*")) {
+        if (allowedOrigins.indexOf(origin) === -1) {
+          var msg =
+            "The CORS policy for this site does not " +
+            "allow access from the specified Origin.";
+          return callback(new Error(msg), false);
+        }
       }
+
       return callback(null, true);
-    }
+    },
   })
 );
 

@@ -1,11 +1,13 @@
 import { validId, prisma } from "../../../../../utils/utils.js";
 import busboy from "busboy";
 import fs from "fs";
+
 export async function post(test) {
   let { params, request } = test;
   let id = params.id;
+  const MAX_FILE_SIZE = 524288000; // 500MB
   if (!id)
-    return new Response("Missing id", {
+    return new Response("Missing ID", {
       status: 400,
       statusText: "Bad Request",
     });
@@ -36,7 +38,13 @@ export async function post(test) {
         if (fileSize === 0) {
           fileSize = request.headers["content-length"];
         }
-        // const progress = Math.floor((totalBytesReceived / fileSize) * 100);
+        if (totalBytesReceived > MAX_FILE_SIZE) {
+          file.resume();
+          return new Response("File Size Too Large", {
+            status: 400,
+            statusText: "Bad Request",
+          });
+        }
       });
       file.on("end", async () => {
         let buf = Buffer.concat(buffers);
@@ -74,7 +82,7 @@ export async function post(test) {
       });
     } catch (err) {
       console.log(err);
-      return new Response("Failed to Save Files", {
+      return new Response("Failed to Save File", {
         status: 500,
         statusText: "Internal Server Error",
       });

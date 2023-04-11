@@ -37,11 +37,14 @@ import BaseLayout from "../../../components/BaseLayout/BaseLayout.astro";
         expiryTime: expiryTime,
       }),
     });
+    console.log(req.status)
     if (req.status === 200) {
       window.location.href = `/hosted/${localStorage.getItem("hostId")}`;
       sessionStorage.removeItem("fileList");
       localStorage.removeItem("hostId");
+      return;
     } else {
+      alert("Unsupport Files Detected");
       return (window.location.href = `/host`);
     }
   });

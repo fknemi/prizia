@@ -10,12 +10,12 @@
     multiple
     class="file-upload-input"
   />
-
   <ol class="files-container"></ol>
 </div>
 
 <script type="text/javascript" defer>
   let fileList = [];
+  const btn = document.getElementsByClassName("submit-btn")[0];
   try {
     fileList = JSON.parse(sessionStorage.getItem("fileList")) || [];
   } catch {}
@@ -34,7 +34,6 @@
 
   function enableButton() {
     if (fileList.length > 0) {
-      let btn = document.getElementsByClassName("submit-btn")[0];
       if (btn) {
         btn.removeAttribute("disabled");
       }
@@ -44,11 +43,12 @@
   }
 
   fileUploadInputElement.addEventListener("change", async (e) => {
+    const MAX_FILE_SIZE = 524288000; // 500 MB
     for (let i = 0; i < e.target.files.length; i++) {
       const files = e.target.files;
 
       for (let file of files) {
-        if (files[i].size > 26214400) {
+        if (files[i].size > MAX_FILE_SIZE) {
           alert("File Size is too large");
           fileUploadInputElement.value = "";
           return;
@@ -130,7 +130,7 @@
             fill="currentColor"></path>
         </svg>
       </span>
-      <p class="">${file.name}</p>
+      <p class="file-name">${file.name}</p>
       <span>
         <svg
           class="svg-md"
@@ -197,5 +197,11 @@
       }
     });
     xhr.send(formData);
+    xhr.addEventListener("load", function () {
+      if (xhr.status !== 200) {
+        removeFile(url);
+        return alert(xhr.response)
+      }
+    });
   }
 </script>
