@@ -28,7 +28,11 @@ export async function verifyToken(token) {
   const calculatedMac = hmac.digest("hex");
 
   if (calculatedMac !== mac) {
-    throw new Error("MAC verification failed");
+    console.log("MAC Verification Failed");
+    return {
+      id: null,
+      password: null,
+    };
   }
 
   const decipher = crypto.createDecipheriv(algo, secKey, inVec);

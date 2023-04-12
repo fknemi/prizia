@@ -4,6 +4,9 @@ import {
   generateToken,
   isFileExpired,
 } from "../../../../../utils/validation.js";
+const failedRequestHeaders = {
+  "Set-Cookie": "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+};
 
 export async function post({ params, request, cookies }) {
   let id = params.id;
@@ -15,12 +18,14 @@ export async function post({ params, request, cookies }) {
     return new Response("Password Required", {
       status: 400,
       statusText: "Bad Request",
+      headers: failedRequestHeaders
     });
   let file = await validId(id);
   if (!file)
     return new Response("Invalid Password", {
       status: 400,
       statusText: "Bad Request",
+      headers: failedRequestHeaders
     });
   let valid = await validatePassword(password, file.password);
 
@@ -28,6 +33,7 @@ export async function post({ params, request, cookies }) {
     return new Response("Invalid Password", {
       status: 400,
       statusText: "Bad Request",
+      headers: failedRequestHeaders
     });
   try {
     let token = await generateToken(id, password);
@@ -36,6 +42,7 @@ export async function post({ params, request, cookies }) {
       return new Response(`${id} Expired`, {
         status: 400,
         statusText: "Bad Request",
+        headers: failedRequestHeaders
       });
     }
     return new Response("Login Successful", {
@@ -51,6 +58,7 @@ export async function post({ params, request, cookies }) {
     return new Response("Error", {
       status: 500,
       statusText: "Internal Server Error",
+      headers: failedRequestHeaders
     });
   }
 }

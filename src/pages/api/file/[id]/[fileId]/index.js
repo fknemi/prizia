@@ -8,14 +8,33 @@ const headers = {
 
 export async function get({ params, request, response }) {
   let fileId = params.fileId;
-  let { password } = await verifyToken(
+  let { id, password } = await verifyToken(
     request.headers.get("cookie").replace("token=", "")
   );
   let file = null;
+  if (!password || !id) {
+    return new Response("Unauthorized", {
+      status: 401,
+      statusText: "Unauthorized",
+      headers,
+    });
+  }
   try {
-    file = await prisma.file.findFirst({
+    file = await prisma.file.update({
       where: {
         id: fileId,
+      },
+      select: {
+        id: true,
+        fileName: true,
+        fileType: true,
+        encryptedFileStoredPath: true,
+      },
+      data: {
+        lastDownloaded: new Date(),
+        timesDownloaded: {
+          increment: 1,
+        },
       },
     });
   } catch (err) {
@@ -23,14 +42,14 @@ export async function get({ params, request, response }) {
     return new Response("Internal Server Error", {
       status: 500,
       statusText: "Internal Server Error",
-      headers
+      headers,
     });
   }
   if (!file) {
     return new Response("File not found", {
       status: 400,
       statusText: "Bad Request",
-      headers
+      headers,
     });
   }
   let decryptedBuffer = null;
@@ -41,14 +60,14 @@ export async function get({ params, request, response }) {
     return new Response("Internal Server Error", {
       status: 500,
       statusText: "Internal Server Error",
-      headers
+      headers,
     });
   }
   if (!decryptedBuffer) {
     return new Response("Internal Server Error", {
       status: 500,
       statusText: "Internal Server Error",
-      headers
+      headers,
     });
   }
 

@@ -1,6 +1,5 @@
 import { hashPassword } from "./hash.js";
 import { PrismaClient } from "@prisma/client";
-
 import fs from "fs";
 export const prisma = new PrismaClient();
 

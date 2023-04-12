@@ -54,9 +54,8 @@ const { id } = Astro.params;
     const cardContainer = document.createElement("article");
     cardContainer.classList.add("file-card");
     cardContainer.innerHTML = `
-      <span>
+      <span class="file-icon-container">
         ${file.icon}
-        </svg>
       </span>
       <h4 class="font-medium">${file.fileName}</h4>
       <p class="file-size">${formatBytes(file.fileSize)}</p>

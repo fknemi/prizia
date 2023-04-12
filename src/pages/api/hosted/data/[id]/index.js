@@ -1,8 +1,15 @@
 import { prisma } from "../../../../../../utils/utils.js";
-import icons from "./icons.json";
+import icons from "../../../../../icons.json";
 
 export async function get({ params, request }) {
   let id = params.id;
+  if (!id) {
+    return new Response("No id provided", {
+      headers: {
+        "Set-Cookie": `token=; Max-Age=0; SameSite=Strict; Secure; HttpOnly`,
+      },
+    });
+  }
   let files = await prisma.files.findUnique({
     where: {
       uploadId: id,

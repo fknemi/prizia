@@ -8,18 +8,21 @@
   :root {
     --primary-text-color: #fff;
     --primary-svg-color: #fff;
+    --secondary-svg-color: #fff;
   }
 }
 @media only screen and (prefers-color-scheme: light) {
   :root {
     --primary-text-color: #000;
     --primary-svg-color: #000;
+    --secondary-svg-color: #fff;
   }
 }
 
 [data-theme="light"] {
   --primary-text-color: #000;
   --primary-svg-color: #000;
+  --secondary-svg-color: #fff;
 }
 
 h1,
@@ -30,7 +33,7 @@ p {
 }
 body,
 html {
-  overflow: hidden;
+  overflow-x: hidden;
 }
 .flex-col {
   flex-direction: column;
@@ -230,7 +233,6 @@ select {
 .file-card svg {
   width: 6rem;
   height: 6rem;
-  fill: var(--primary-svg-color);
 }
 .file-size {
   margin-top: -2rem;
@@ -240,9 +242,7 @@ select {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 80%;
-  gap: 2rem;
-  flex-wrap: wrap;
+  height: max-content;
 }
 
 .flex-wrap {
@@ -261,7 +261,7 @@ select {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 80vh;
+  padding-top: 2rem;
 }
 .files-card-title-container {
   display: flex;
@@ -274,7 +274,6 @@ select {
 .files-card-title-container article {
   position: absolute;
   right: 2rem;
-  top: -2rem;
   padding: 0.5rem;
   font-weight: 500;
   color: var(--primary-text-color);
@@ -330,6 +329,7 @@ select {
   .files-card-title-container article {
     position: relative;
     right: 0;
+    top: -1rem;
   }
 }
 @media only screen and (max-width: 480px) {
@@ -347,4 +347,3 @@ select {
     height: 2.5rem;
   }
 }
-

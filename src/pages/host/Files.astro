@@ -15,7 +15,6 @@
 
 <script type="text/javascript" defer>
   let fileList = [];
-  const btn = document.getElementsByClassName("submit-btn")[0];
   try {
     fileList = JSON.parse(sessionStorage.getItem("fileList")) || [];
   } catch {}
@@ -31,8 +30,9 @@
   window.addEventListener("DOMContentLoaded", () => {
     enableButton();
   });
-
   function enableButton() {
+    // @ts-ignore
+    const btn = document.getElementById("submit-btn");
     if (fileList.length > 0) {
       if (btn) {
         btn.removeAttribute("disabled");
@@ -66,7 +66,7 @@
         await uploadFile(file, url);
         sessionStorage.setItem("fileList", JSON.stringify(fileList));
 
-        if (fileList.length === 3) {
+        if (fileList.length === 4) {
           alert("Reached File Limit");
           fileUploadInputElement.setAttribute("disabled", "true");
           fileUploadInputElement.style.display = "none";
@@ -117,18 +117,7 @@
       </span>
 
       <span>
-        <svg
-          class="svg-file-icon"
-          width="100%"
-          height="100%"
-          viewBox="0 0 46 38"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M6 0C2.686 0 0 2.686 0 6V32C0 35.314 2.686 38 6 38H40C43.314 38 46 35.314 46 32V6C46 2.686 43.314 0 40 0H6ZM6 4H40C41.105 4 42 4.895 42 6V28.4336L32.6816 20.0547C31.1586 18.6847 28.8442 18.6865 27.3242 20.0605L19.4023 27.2188L15.6094 23.9746C14.1084 22.6906 11.8944 22.6954 10.3984 23.9844L4 29.4961V6C4 4.895 4.895 4 6 4ZM14 10C11.791 10 10 11.791 10 14C10 16.209 11.791 18 14 18C16.209 18 18 16.209 18 14C18 11.791 16.209 10 14 10Z"
-            fill="currentColor"></path>
-        </svg>
+        
       </span>
       <p class="file-name">${file.name}</p>
       <span>
@@ -162,9 +151,32 @@
     filesContainerElement.appendChild(fileContainer);
   }
 
-  function removeFile(id) {
-    let fileElement = document.getElementById(id);
-    fileList = fileList.filter((file) => file.url !== id);
+  async function removeFile(url) {
+    console.log(url);
+    let fileElement = document.getElementById(url);
+    let fileName;
+    fileList.forEach((file, index) => {
+      if (file.url === url) {
+        fileName = file.name;
+        fileList.splice(index, 1);
+      }
+    });
+    let hostId = localStorage.getItem("hostId");
+
+    if (typeof hostId !== "string" || hostId instanceof String) {
+      return;
+    }
+
+    if (!hostId) return sessionStorage.setItem("fileList", JSON.stringify([]));
+    const res = await fetch(`/api/remove/${hostId}`, {
+      method: "DELETE",
+      body: JSON.stringify({ fileName }),
+    });
+    if (res.status !== 200) {
+      sessionStorage.setItem("fileList", JSON.stringify([]));
+      window.location.reload();
+      return;
+    }
     sessionStorage.setItem("fileList", JSON.stringify(fileList));
     fileElement.classList.add("removing-file");
     setTimeout(() => {
@@ -200,7 +212,7 @@
     xhr.addEventListener("load", function () {
       if (xhr.status !== 200) {
         removeFile(url);
-        return alert(xhr.response)
+        return alert(xhr.response);
       }
     });
   }

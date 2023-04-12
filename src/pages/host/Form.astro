@@ -5,12 +5,11 @@ import Files from "./Files.astro";
 <form class="file-form-container">
   <h2 id="host-id"></h2>
   <Files />
-  <button type="submit" class="submit-btn">Save</button>
+  <button type="submit" id="submit-btn" class="submit-btn">Save</button>
 </form>
 <script>
   const form = document.querySelector(".file-form-container");
   const hostId = document.getElementById("host-id");
-  const btn = document.getElementsByClassName("submit-btn")[0];
 
   try {
     hostId.innerText = JSON.parse(localStorage.getItem("hostId")) || "...";

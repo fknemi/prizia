@@ -1,6 +1,5 @@
 import crypto from "crypto";
 import { getCipherKey, validateFile } from "./encrypt.js";
-import path from "path";
 import fs from "fs";
 export async function decrypt(filePath, password) {
   let encrypted = fs.readFileSync(filePath);
