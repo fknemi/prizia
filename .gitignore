@@ -26,3 +26,4 @@ package-lock.json
 .vscode
 uploads
 TEMP
+.astro/*

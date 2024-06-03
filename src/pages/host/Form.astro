@@ -16,7 +16,7 @@ import Files from "./Files.astro";
   } catch {
     hostId.innerText = "...";
   }
-  genereateId();
+  generateId();
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -24,7 +24,7 @@ import Files from "./Files.astro";
     return (window.location.href = "/host/password");
   });
 
-  async function genereateId() {
+  async function generateId() {
     // @ts-ignore
     if (localStorage.getItem("hostId") && fileList.length !== 0) {
       hostId.innerText = localStorage.getItem("hostId");
