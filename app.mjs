@@ -18,7 +18,7 @@ if (!fs.existsSync(`./${process.env.UPLOADS_FOLDER}`)) {
 }
 
 const allowedOrigins = [
-  "https://prizia.darkness.co.in",
+  "https://prizia.vihaan.ind.in",
   process.env.ENVIRONMENT === "development" ? "*" : "",
 ];
 const app = express();
