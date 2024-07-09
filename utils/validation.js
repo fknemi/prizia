@@ -1,67 +1,62 @@
-import crypto from "crypto";
-import { prisma } from "./utils.js";
-const algo = "aes-256-cbc";
-const inVec = Buffer.from(process.env.IV, "hex");
-const secKey = Buffer.from(process.env.SECRET_KEY, "hex");
-const macKey = Buffer.from(process.env.MAC_KEY, "hex");
+import crypto from 'crypto';
+import { prisma } from './utils.js';
+import { getCipherKey } from './encrypt.js';
+const algo = 'aes-256-cbc';
+const inVec = Buffer.from(process.env.IV, 'hex');
+const secKey = Buffer.from(process.env.SECRET_KEY, 'hex');
+const macKey = Buffer.from(process.env.MAC_KEY, 'hex');
 
-export async function generateToken(id, password) {
-  const cipherText = crypto.createCipheriv(algo, secKey, inVec);
-  let encryptedData = cipherText.update(
-    JSON.stringify({ id: id, password: password }),
-    "utf-8",
-    "hex"
-  );
-  encryptedData += cipherText.final("hex");
+export function generateToken(data, password) {
+  const key = getCipherKey(password); // Ensure this returns a 32-byte buffer
+  const iv = crypto.randomBytes(16); // Generate a 16-byte IV
 
-  const hmac = crypto.createHmac("sha256", macKey);
-  hmac.update(encryptedData);
-  const mac = hmac.digest("hex");
+  const cipher = crypto.createCipheriv('aes-256-ctr', key, iv);
+  let encrypted = cipher.update(data, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
 
-  return `${encryptedData}:${mac}`;
+  return encrypted;
 }
 
 export async function verifyToken(token) {
-  const [encryptedData, mac] = token.split(":");
-  const hmac = crypto.createHmac("sha256", macKey);
-  hmac.update(encryptedData);
-  const calculatedMac = hmac.digest("hex");
+  const [encrypted, mac] = token.split(':');
+  const calculatedMac = crypto.createHmac('sha256', macKey).update(encrypted).digest('hex');
 
   if (calculatedMac !== mac) {
-    console.log("MAC Verification Failed");
-    return {
-      id: null,
-      password: null,
-    };
+    console.error('MAC verification failed.');
+    return { id: null, password: null };
   }
 
   const decipher = crypto.createDecipheriv(algo, secKey, inVec);
-  let decryptedData = decipher.update(encryptedData, "hex", "utf-8");
-  decryptedData += decipher.final("utf-8");
+  let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+  decrypted += decipher.final('utf8');
 
-  return JSON.parse(decryptedData);
+  return JSON.parse(decrypted);
 }
 
 export async function validateUser(req, res, next) {
-  let token = req.headers.cookie.replace("token=", "");
-  let id = req.params.id;
+  const token = req.headers.cookie?.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
+  const { id } = req.params;
 
   if (!token || !id) {
-    return res.status(401).send("Unauthorized");
+    return res.status(401).send('Unauthorized');
   }
-  let isValid = await verifyToken(token);
-  if (!isValid) {
-    return res.status(401).send("Unauthorized");
+
+  const isValid = await verifyToken(token);
+  if (!isValid.id) {
+    return res.status(401).send('Unauthorized');
   }
 
   next();
 }
 
 export async function isFileExpired(id) {
-  const data = await prisma.files.findFirst({
-    where: {
-      uploadId: id,
-    },
+  const file = await prisma.files.findUnique({
+    where: { uploadId: id },
   });
-  return data.expiresAt < new Date();
+
+  if (!file) {
+    throw new Error('File not found');
+  }
+
+  return file.expiresAt < new Date();
 }

@@ -24,5 +24,5 @@ package-lock.json
 
 # misc
 .vscode
-uploads
-TEMP
+
+.astro/*

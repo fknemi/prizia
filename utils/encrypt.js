@@ -16,8 +16,8 @@ export function getCipherKey(password) {
   return crypto
     .createHash("sha256")
     .update(String(password))
-    .digest("base64")
-    .substr(0, 32);
+    .digest() // Use binary digest
+    .slice(0, 32); // Ensure the key is 32 bytes long
 }
 
 export async function validateFile(filePath, fileExtension) {
