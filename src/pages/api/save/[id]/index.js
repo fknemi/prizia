@@ -6,7 +6,7 @@ import {
 } from "../../../../../utils/utils.js";
 import { encryptAllFiles } from "../../../../../utils/encrypt.js";
 
-export async function put({ params, request, response }) {
+export async function PUT({ params, request, response }) {
   const id = params.id;
 
   const { password, expiryTime } = await request.json();

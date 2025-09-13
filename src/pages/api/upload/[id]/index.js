@@ -9,7 +9,7 @@ const createFileId = init({
   fingerprint: "a-custom-host-fingerprint",
 });
 
-export async function post(test) {
+export async function POST(test) {
   let { params, request } = test;
   let id = params.id;
   const MAX_FILE_SIZE = 524288000; // 500MB

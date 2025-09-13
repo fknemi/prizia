@@ -6,12 +6,22 @@ const headers = {
   "Set-Cookie": "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
 };
 
-export async function get({ params, request, response }) {
+export async function GET({ params, request, cookies }) {
   let fileId = params.fileId;
-  let { id, password } = await verifyToken(
-    request.headers.get("cookie").replace("token=", "")
-  );
+  
+  const token = cookies.get("token")?.value;
+  
+  if (!token) {
+    return new Response("Unauthorized", {
+      status: 401,
+      statusText: "Unauthorized",
+      headers,
+    });
+  }
+
+  let { id, password } = await verifyToken(token);
   let file = null;
+  
   if (!password || !id) {
     return new Response("Unauthorized", {
       status: 401,
@@ -19,6 +29,7 @@ export async function get({ params, request, response }) {
       headers,
     });
   }
+  
   try {
     file = await prisma.file.update({
       where: {
@@ -45,6 +56,7 @@ export async function get({ params, request, response }) {
       headers,
     });
   }
+  
   if (!file) {
     return new Response("File not found", {
       status: 400,
@@ -52,6 +64,7 @@ export async function get({ params, request, response }) {
       headers,
     });
   }
+  
   let decryptedBuffer = null;
   try {
     decryptedBuffer = await decrypt(file.encryptedFileStoredPath, password);
@@ -63,6 +76,7 @@ export async function get({ params, request, response }) {
       headers,
     });
   }
+  
   if (!decryptedBuffer) {
     return new Response("Internal Server Error", {
       status: 500,
@@ -70,7 +84,7 @@ export async function get({ params, request, response }) {
       headers,
     });
   }
-
+  
   return new Response(decryptedBuffer, {
     status: 200,
     statusText: "OK",

@@ -1,7 +1,7 @@
 import { validId } from "../../../../../utils/utils.js";
 import readable from "readable-url-names";
 
-export async function get({ params, req }) {
+export async function GET({ params, req }) {
   let generator = new readable();
   let id = generator.generate();
   let isValid = await validId(id);

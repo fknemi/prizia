@@ -1,6 +1,6 @@
 import { prisma, validId } from "../../../../../utils/utils.js";
 import fs from "fs";
-export async function del({ params, request }) {
+export async function DEL({ params, request }) {
   const id = params.id;
   const { fileName } = await request.json();
 

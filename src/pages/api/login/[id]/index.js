@@ -4,22 +4,24 @@ import {
   generateToken,
   isFileExpired,
 } from "../../../../../utils/validation.js";
+
 const failedRequestHeaders = {
   "Set-Cookie": "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
 };
 
-export async function post({ params, request, cookies }) {
+export async function POST({ params, request, cookies }) {
   let id = params.id;
   if (!id)
     return new Response("No ID", { status: 400, statusText: "Bad Request" });
+    
   const { password } = await request.json();
-
   if (!password)
     return new Response("Password Required", {
       status: 400,
       statusText: "Bad Request",
       headers: failedRequestHeaders
     });
+    
   let file = await validId(id);
   if (!file)
     return new Response("Invalid Password", {
@@ -27,16 +29,16 @@ export async function post({ params, request, cookies }) {
       statusText: "Bad Request",
       headers: failedRequestHeaders
     });
+    
   let valid = await validatePassword(password, file.password);
-
   if (!valid)
     return new Response("Invalid Password", {
       status: 400,
       statusText: "Bad Request",
       headers: failedRequestHeaders
     });
+    
   try {
-    let token = await generateToken(id, password);
     let didFileExpire = await isFileExpired(id);
     if (didFileExpire) {
       return new Response(`${id} Expired`, {
@@ -45,6 +47,10 @@ export async function post({ params, request, cookies }) {
         headers: failedRequestHeaders
       });
     }
+    
+    // Fix: Pass an object with id and password to generateToken
+    let token = generateToken({ id, password });
+    
     return new Response("Login Successful", {
       status: 200,
       statusText: "OK",
@@ -62,3 +68,4 @@ export async function post({ params, request, cookies }) {
     });
   }
 }
+

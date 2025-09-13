@@ -43,7 +43,7 @@ import Files from "./Files.astro";
     let id = await req.text();
     if (!id) {
       while (!id) {
-        genereateId();
+        generateId()
       }
     } else {
       localStorage.setItem("hostId", id);

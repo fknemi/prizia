@@ -12,31 +12,31 @@
     "astro": "astro"
   },
   "devDependencies": {
-    "@astrojs/node": "^5.1.0",
+    "@astrojs/node": "^9.4.3",
     "@szmarczak/http-timer": "^5.0.1",
     "@types/busboy": "^1.5.4",
-    "astro": "^2.1.7",
-    "path-to-regexp": "^6.2.2",
-    "prisma": "5.10.2",
-    "sass": "^1.77.4",
-    "typescript": "^5.4.5"
+    "astro": "^5.13.7",
+    "path-to-regexp": "^8.3.0",
+    "prisma": "6.16.1",
+    "sass": "^1.92.1",
+    "typescript": "^5.9.2"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@paralleldrive/cuid2": "^2.2.2",
-    "@prisma/client": "5.10.2",
+    "@prisma/client": "6.16.1",
     "@types/node-cron": "^3.0.11",
-    "argon2": "^0.40.3",
-    "axios": "^1.7.2",
-    "body-parser": "^1.20.2",
+    "argon2": "^0.44.0",
+    "axios": "^1.12.1",
+    "body-parser": "^2.2.0",
     "busboy": "^1.6.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
+    "dotenv": "^17.2.2",
     "event-stream": "^4.0.1",
-    "express": "^4.19.2",
+    "express": "^5.1.0",
     "express-busboy": "^10.1.0",
-    "node-cron": "^3.0.3",
+    "node-cron": "^4.2.1",
     "readable-url-names": "^1.1.2",
-    "sharp": "^0.33.4"
+    "sharp": "^0.34.3"
   }
 }

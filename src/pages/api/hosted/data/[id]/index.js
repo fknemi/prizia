@@ -1,7 +1,7 @@
-import { prisma } from "../../../../../../utils/utils.js";
+import { prisma } from "../../../../../../utils/utils.js"
 import icons from "../../../../../icons.json";
 
-export async function get({ params, request }) {
+export async function GET({ params, request }) {
   let id = params.id;
   if (!id) {
     return new Response("No id provided", {
