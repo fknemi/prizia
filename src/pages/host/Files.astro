@@ -2,90 +2,90 @@
 ---
 
 <div class="container form-container flex-center flex-col">
-  <input
-    type="file"
-    name=""
-    id="files"
-    max="3"
-    multiple
-    class="file-upload-input"
-  />
-  <ol class="files-container"></ol>
+    <input
+            type="file"
+            name=""
+            id="files"
+            max="3"
+            multiple
+            class="file-upload-input"
+            />
+            <ol class="files-container"></ol>
 </div>
 
 <script type="text/javascript" defer>
-  let fileList = [];
-  try {
-    fileList = JSON.parse(sessionStorage.getItem("fileList")) || [];
-  } catch {}
-  const filesContainerElement = document.querySelector(".files-container");
-  const fileUploadInputElement = document.querySelector(".file-upload-input");
+    let fileList = [];
+    try {
+        fileList = JSON.parse(sessionStorage.getItem("fileList")) || [];
+    } catch {}
+    const filesContainerElement = document.querySelector(".files-container");
+    const fileUploadInputElement = document.querySelector(".file-upload-input");
 
-  if (fileList) {
-    fileList.forEach((file) => {
-      addFileElement(file);
+    if (fileList) {
+        fileList.forEach((file) => {
+            addFileElement(file);
+        });
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+        enableButton();
     });
-  }
-
-  window.addEventListener("DOMContentLoaded", () => {
-    enableButton();
-  });
-  function enableButton() {
-    // @ts-ignore
-    const btn = document.getElementById("submit-btn");
-    if (fileList.length > 0) {
-      if (btn) {
-        btn.removeAttribute("disabled");
-      }
-    } else {
-      btn.setAttribute("disabled", "true");
-    }
-  }
-
-  fileUploadInputElement.addEventListener("change", async (e) => {
-    const MAX_FILE_SIZE = 524288000; // 500 MB
-    for (let i = 0; i < e.target.files.length; i++) {
-      const files = e.target.files;
-
-      for (let file of files) {
-        if (files[i].size > MAX_FILE_SIZE) {
-          alert("File Size is too large");
-          fileUploadInputElement.value = "";
-          return;
-        }
-
-        let url = URL.createObjectURL(file);
-        fileList.push({
-          name: file.name,
-          url: url,
-        });
-        addFileElement({
-          name: file.name,
-          url: url,
-        });
-        await uploadFile(file, url);
-        sessionStorage.setItem("fileList", JSON.stringify(fileList));
-
-        if (fileList.length === 4) {
-          alert("Reached File Limit");
-          fileUploadInputElement.setAttribute("disabled", "true");
-          fileUploadInputElement.style.display = "none";
-          return;
+    function enableButton() {
+        // @ts-ignore
+        const btn = document.getElementById("submit-btn");
+        if (fileList.length > 0) {
+            if (btn) {
+                btn.removeAttribute("disabled");
+            }
         } else {
-          setTimeout(() => {
-            fileUploadInputElement.value = "";
-          }, 200);
+            btn.setAttribute("disabled", "true");
         }
-      }
-      enableButton();
     }
-  });
 
-  function addFileElement(file) {
-    let fileContainer = document.createElement("article");
-    fileContainer.classList.add("loading-file");
-    fileContainer.id = file.url;
-    fileContainer.innerHTML = `
+    fileUploadInputElement.addEventListener("change", async (e) => {
+        const MAX_FILE_SIZE = 524288000; // 500 MB
+        for (let i = 0; i < e.target.files.length; i++) {
+            const files = e.target.files;
+
+            for (let file of files) {
+                if (files[i].size > MAX_FILE_SIZE) {
+                    alert("File Size is too large");
+                    fileUploadInputElement.value = "";
+                    return;
+                }
+
+                let url = URL.createObjectURL(file);
+                fileList.push({
+                    name: file.name,
+                    url: url,
+                });
+                addFileElement({
+                    name: file.name,
+                    url: url,
+                });
+                await uploadFile(file, url);
+                sessionStorage.setItem("fileList", JSON.stringify(fileList));
+
+                if (fileList.length === 4) {
+                    alert("Reached File Limit");
+                    fileUploadInputElement.setAttribute("disabled", "true");
+                    fileUploadInputElement.style.display = "none";
+                    break
+                } else {
+                    setTimeout(() => {
+                        fileUploadInputElement.value = "";
+                    }, 200);
+                }
+            }
+            enableButton();
+        }
+    });
+
+    function addFileElement(file) {
+        let fileContainer = document.createElement("article");
+        fileContainer.classList.add("loading-file");
+        fileContainer.id = file.url;
+        fileContainer.innerHTML = `
       <span class="progress-container">
         <progress value="0" max="100"></progress>
         <span>
@@ -117,7 +117,7 @@
       </span>
 
       <span>
-        
+
       </span>
       <p class="file-name">${file.name}</p>
       <span>
@@ -148,72 +148,72 @@
         </svg>
       </span>
       `;
-    filesContainerElement.appendChild(fileContainer);
-  }
-
-  async function removeFile(url) {
-    console.log(url);
-    let fileElement = document.getElementById(url);
-    let fileName;
-    fileList.forEach((file, index) => {
-      if (file.url === url) {
-        fileName = file.name;
-        fileList.splice(index, 1);
-      }
-    });
-    let hostId = localStorage.getItem("hostId");
-
-    if (typeof hostId !== "string" || hostId instanceof String) {
-      return;
+        filesContainerElement.appendChild(fileContainer);
     }
 
-    if (!hostId) return sessionStorage.setItem("fileList", JSON.stringify([]));
-    const res = await fetch(`/api/remove/${hostId}`, {
-      method: "DELETE",
-      body: JSON.stringify({ fileName }),
-    });
-    if (res.status !== 200) {
-      sessionStorage.setItem("fileList", JSON.stringify([]));
-      window.location.reload();
-      return;
+    async function removeFile(url) {
+        console.log(url);
+        let fileElement = document.getElementById(url);
+        let fileName;
+        fileList.forEach((file, index) => {
+            if (file.url === url) {
+                fileName = file.name;
+                fileList.splice(index, 1);
+            }
+        });
+        let hostId = localStorage.getItem("hostId");
+
+        if (typeof hostId !== "string" || hostId instanceof String) {
+            return;
+        }
+
+        if (!hostId) return sessionStorage.setItem("fileList", JSON.stringify([]));
+        const res = await fetch(`/api/remove/${hostId}`, {
+            method: "DELETE",
+            body: JSON.stringify({ fileName }),
+        });
+        if (res.status !== 200) {
+            sessionStorage.setItem("fileList", JSON.stringify([]));
+            window.location.reload();
+            return;
+        }
+        sessionStorage.setItem("fileList", JSON.stringify(fileList));
+        fileElement.classList.add("removing-file");
+        setTimeout(() => {
+            fileElement.remove();
+        }, 500);
+        enableButton();
     }
-    sessionStorage.setItem("fileList", JSON.stringify(fileList));
-    fileElement.classList.add("removing-file");
-    setTimeout(() => {
-      fileElement.remove();
-    }, 500);
-    enableButton();
-  }
-  async function uploadFile(file, url) {
-    let hostId = localStorage.getItem("hostId");
+    async function uploadFile(file, url) {
+        let hostId = localStorage.getItem("hostId");
 
-    if (typeof hostId !== "string" || hostId instanceof String) {
-      return;
+        if (typeof hostId !== "string" || hostId instanceof String) {
+            return;
+        }
+
+        if (!hostId) return;
+
+        let formData = new FormData();
+        formData.append("file", file);
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", `/api/upload/${hostId}`);
+        xhr.upload.addEventListener("progress", (e) => {
+            let progress = Math.round((e.loaded / e.total) * 100);
+            let fileElement = document.getElementById(url);
+            fileElement.querySelector("progress").value = progress;
+            if (progress === 100) {
+                fileElement.classList.remove("loading-file");
+                fileElement
+                    .querySelector(`article[id='${url}'] .progress-container`)
+                    .remove();
+            }
+        });
+        xhr.send(formData);
+        xhr.addEventListener("load", function () {
+            if (xhr.status !== 200) {
+                removeFile(url);
+                return alert(xhr.response);
+            }
+        });
     }
-
-    if (!hostId) return;
-
-    let formData = new FormData();
-    formData.append("file", file);
-    let xhr = new XMLHttpRequest();
-    xhr.open("POST", `/api/upload/${hostId}`);
-    xhr.upload.addEventListener("progress", (e) => {
-      let progress = Math.round((e.loaded / e.total) * 100);
-      let fileElement = document.getElementById(url);
-      fileElement.querySelector("progress").value = progress;
-      if (progress === 100) {
-        fileElement.classList.remove("loading-file");
-        fileElement
-          .querySelector(`article[id='${url}'] .progress-container`)
-          .remove();
-      }
-    });
-    xhr.send(formData);
-    xhr.addEventListener("load", function () {
-      if (xhr.status !== 200) {
-        removeFile(url);
-        return alert(xhr.response);
-      }
-    });
-  }
 </script>
